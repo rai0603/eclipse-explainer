@@ -1,0 +1,794 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>食 · 日月之間 — 月全蝕與日全食互動解說</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@300;500;700;900&family=Noto+Sans+TC:wght@300;400;500;700&family=Fraunces:opsz,wght@9..144,400;9..144,600&display=swap" rel="stylesheet" />
+<style>
+  :root{
+    --void:#06060d;
+    --ink:#0b0c16;
+    --panel:rgba(20,22,38,.62);
+    --panel-solid:#12131f;
+    --line:rgba(255,255,255,.10);
+    --line-strong:rgba(255,255,255,.18);
+    --text:#ece9e0;
+    --muted:#9b9db0;
+    --faint:#6a6c80;
+    --sun:#ffb43c;
+    --sun-hot:#ff7a18;
+    --blood:#d94432;
+    --blood-deep:#9b1f17;
+    --silver:#e4e9f2;
+    --earth:#3f86c9;
+    --gold:#e8b04b;
+    --shadow-pen:rgba(120,128,170,.20);
+    --shadow-umb:rgba(4,4,10,.92);
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth}
+  body{
+    background:
+      radial-gradient(1200px 700px at 78% -10%, rgba(255,140,40,.10), transparent 60%),
+      radial-gradient(900px 600px at 10% 110%, rgba(60,110,200,.12), transparent 55%),
+      linear-gradient(180deg,#07070f 0%, #05050b 100%);
+    color:var(--text);
+    font-family:"Noto Sans TC",system-ui,sans-serif;
+    line-height:1.75;
+    overflow-x:hidden;
+    -webkit-font-smoothing:antialiased;
+  }
+  /* grain overlay */
+  body::after{
+    content:"";position:fixed;inset:0;pointer-events:none;z-index:9999;opacity:.045;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='3'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+    mix-blend-mode:overlay;
+  }
+  .wrap{max-width:1120px;margin:0 auto;padding:0 22px}
+
+  /* ---------- HERO ---------- */
+  header.hero{position:relative;padding:84px 0 38px;text-align:center;overflow:hidden}
+  .kicker{
+    font-family:"Fraunces",serif;font-style:italic;letter-spacing:.18em;
+    color:var(--gold);font-size:.92rem;text-transform:uppercase;opacity:.9;
+  }
+  h1.title{
+    font-family:"Noto Serif TC",serif;font-weight:900;
+    font-size:clamp(2.6rem,7vw,5.4rem);line-height:1.02;letter-spacing:.02em;
+    margin:.18em 0 .1em;
+    background:linear-gradient(180deg,#fff 0%,#cfd2e0 60%,#7e8196 100%);
+    -webkit-background-clip:text;background-clip:text;color:transparent;
+  }
+  h1.title .eclipse-o{
+    display:inline-block;width:.86em;height:.86em;border-radius:50%;
+    background:radial-gradient(circle at 38% 38%, #fff, var(--sun) 40%, var(--sun-hot) 70%, #5a2a00);
+    box-shadow:0 0 34px rgba(255,150,40,.55);
+    vertical-align:-.04em;position:relative;
+  }
+  h1.title .eclipse-o::after{
+    content:"";position:absolute;inset:0;border-radius:50%;
+    background:var(--void);transform:translate(18%,-12%);
+    box-shadow:0 0 0 1px rgba(255,180,90,.5);
+  }
+  .lede{max-width:620px;margin:14px auto 0;color:var(--muted);font-weight:300;font-size:1.06rem}
+  .lede b{color:var(--text);font-weight:500}
+
+  /* mode toggle */
+  .mode-toggle{display:inline-flex;gap:6px;margin-top:30px;padding:6px;
+    background:var(--panel);border:1px solid var(--line);border-radius:999px;
+    backdrop-filter:blur(8px)}
+  .mode-toggle button{
+    font-family:"Noto Sans TC";font-size:1rem;font-weight:500;color:var(--muted);
+    background:transparent;border:0;padding:11px 26px;border-radius:999px;cursor:pointer;
+    transition:.35s cubic-bezier(.2,.7,.2,1);letter-spacing:.04em;display:flex;align-items:center;gap:9px}
+  .mode-toggle button .dot{width:13px;height:13px;border-radius:50%;transition:.35s}
+  .mode-toggle button[data-mode="lunar"] .dot{background:linear-gradient(135deg,#fff,#b9c0d0)}
+  .mode-toggle button[data-mode="solar"] .dot{background:radial-gradient(circle at 35% 35%,#fff,var(--sun) 50%,var(--sun-hot))}
+  .mode-toggle button.active{color:#0a0a12;box-shadow:0 6px 20px rgba(0,0,0,.4)}
+  .mode-toggle button.active[data-mode="lunar"]{background:linear-gradient(135deg,#f3f5fa,#c7cdda)}
+  .mode-toggle button.active[data-mode="solar"]{background:linear-gradient(135deg,var(--sun),var(--sun-hot))}
+
+  /* ---------- STAGE ---------- */
+  section{padding:30px 0}
+  .stage-card{
+    background:var(--panel);border:1px solid var(--line);border-radius:22px;
+    padding:8px;backdrop-filter:blur(10px);box-shadow:0 30px 80px -40px rgba(0,0,0,.9);
+    position:relative;overflow:hidden;
+  }
+  .stage-grid{display:grid;grid-template-columns:1.62fr 1fr;gap:8px}
+  @media(max-width:820px){.stage-grid{grid-template-columns:1fr}}
+  .canvas-box{position:relative;border-radius:16px;overflow:hidden;background:#04040a}
+  .canvas-box canvas{display:block;width:100%;height:auto}
+  .cbox-label{
+    position:absolute;top:12px;left:14px;font-family:"Fraunces",serif;font-style:italic;
+    font-size:.84rem;letter-spacing:.06em;color:var(--faint);z-index:3;
+    background:rgba(0,0,0,.3);padding:3px 10px;border-radius:8px;backdrop-filter:blur(4px)}
+  .phase-badge{
+    position:absolute;bottom:12px;left:14px;z-index:3;display:flex;align-items:center;gap:9px;
+    background:rgba(0,0,0,.42);border:1px solid var(--line);border-radius:10px;
+    padding:7px 13px;backdrop-filter:blur(6px)}
+  .phase-badge .pname{font-family:"Noto Serif TC";font-weight:700;font-size:1.04rem}
+  .phase-badge .pen{font-size:.72rem;color:var(--faint);letter-spacing:.1em}
+
+  /* controls */
+  .controls{padding:18px 16px 12px}
+  .scrub-row{display:flex;align-items:center;gap:14px}
+  .playbtn{
+    flex:none;width:50px;height:50px;border-radius:50%;border:1px solid var(--line-strong);
+    background:radial-gradient(circle at 35% 30%,rgba(255,255,255,.12),rgba(255,255,255,.02));
+    color:var(--text);cursor:pointer;font-size:1.2rem;display:grid;place-items:center;
+    transition:.25s}
+  .playbtn:hover{border-color:var(--gold);color:var(--gold);transform:scale(1.05)}
+  input[type=range]{
+    -webkit-appearance:none;appearance:none;width:100%;height:4px;border-radius:4px;
+    background:linear-gradient(90deg,var(--gold) var(--fill,50%),rgba(255,255,255,.12) var(--fill,50%));
+    cursor:pointer;outline:none}
+  input[type=range]::-webkit-slider-thumb{
+    -webkit-appearance:none;width:18px;height:18px;border-radius:50%;
+    background:radial-gradient(circle at 35% 35%,#fff,var(--gold));
+    box-shadow:0 0 0 5px rgba(232,176,75,.18),0 2px 8px rgba(0,0,0,.5);cursor:grab}
+  input[type=range]::-moz-range-thumb{width:18px;height:18px;border:0;border-radius:50%;
+    background:radial-gradient(circle at 35% 35%,#fff,var(--gold));box-shadow:0 0 0 5px rgba(232,176,75,.18)}
+  .ctl-meta{display:flex;justify-content:space-between;align-items:center;margin-top:14px;
+    font-size:.82rem;color:var(--faint);letter-spacing:.04em}
+  .speed-pills{display:flex;gap:5px}
+  .speed-pills button{background:transparent;border:1px solid var(--line);color:var(--muted);
+    font-family:"Fraunces",serif;font-size:.8rem;padding:3px 11px;border-radius:7px;cursor:pointer;transition:.2s}
+  .speed-pills button.on{border-color:var(--gold);color:var(--gold);background:rgba(232,176,75,.08)}
+
+  /* explainer strip under stage */
+  .explain-strip{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;
+    background:var(--line);border:1px solid var(--line);border-radius:16px;overflow:hidden;margin-top:22px}
+  @media(max-width:680px){.explain-strip{grid-template-columns:1fr}}
+  .explain-strip .cell{background:var(--ink);padding:20px}
+  .explain-strip .cell h4{font-family:"Noto Serif TC";font-weight:700;font-size:1.05rem;margin-bottom:6px;display:flex;align-items:center;gap:8px}
+  .explain-strip .cell h4 .n{font-family:"Fraunces",serif;font-style:italic;color:var(--gold);font-size:.95rem}
+  .explain-strip .cell p{font-size:.92rem;color:var(--muted);font-weight:300}
+
+  /* ---------- generic section heading ---------- */
+  .sec-head{display:flex;align-items:baseline;gap:16px;margin:46px 0 22px}
+  .sec-head .idx{font-family:"Fraunces",serif;font-style:italic;font-size:1.1rem;color:var(--gold)}
+  .sec-head h2{font-family:"Noto Serif TC";font-weight:700;font-size:clamp(1.5rem,3.4vw,2.1rem);letter-spacing:.02em}
+  .sec-head .rule{flex:1;height:1px;background:linear-gradient(90deg,var(--line-strong),transparent)}
+
+  /* ---------- WHY NOT MONTHLY ---------- */
+  .why-grid{display:grid;grid-template-columns:1.1fr 1fr;gap:20px;align-items:stretch}
+  @media(max-width:820px){.why-grid{grid-template-columns:1fr}}
+  .why-canvas-box{position:relative;border-radius:18px;overflow:hidden;background:#04040a;border:1px solid var(--line)}
+  .why-canvas-box canvas{display:block;width:100%;height:auto}
+  .why-verdict{position:absolute;top:14px;right:14px;z-index:3;padding:8px 14px;border-radius:10px;
+    font-weight:700;font-size:.95rem;backdrop-filter:blur(6px);transition:.3s;letter-spacing:.03em}
+  .verdict-yes{background:rgba(232,176,75,.16);border:1px solid var(--gold);color:var(--gold)}
+  .verdict-no{background:rgba(120,128,170,.12);border:1px solid var(--line-strong);color:var(--muted)}
+  .why-panel{background:var(--panel);border:1px solid var(--line);border-radius:18px;padding:26px;display:flex;flex-direction:column;gap:20px}
+  .slider-block label{display:flex;justify-content:space-between;align-items:baseline;font-size:.92rem;color:var(--muted);margin-bottom:8px}
+  .slider-block label b{font-family:"Fraunces",serif;color:var(--text);font-size:1.15rem}
+  .why-phase-toggle{display:inline-flex;gap:4px;padding:4px;background:rgba(0,0,0,.3);border:1px solid var(--line);border-radius:10px;align-self:flex-start}
+  .why-phase-toggle button{background:transparent;border:0;color:var(--muted);padding:7px 16px;border-radius:7px;cursor:pointer;font-family:"Noto Sans TC";font-size:.9rem;transition:.2s}
+  .why-phase-toggle button.on{background:rgba(255,255,255,.1);color:var(--text)}
+  .why-note{font-size:.9rem;color:var(--muted);font-weight:300;border-top:1px solid var(--line);padding-top:16px}
+  .why-note b{color:var(--gold);font-weight:500}
+
+  /* ---------- KNOWLEDGE CARDS ---------- */
+  .cards{display:grid;grid-template-columns:repeat(2,1fr);gap:18px}
+  @media(max-width:680px){.cards{grid-template-columns:1fr}}
+  .card{background:var(--panel);border:1px solid var(--line);border-radius:18px;padding:26px;
+    position:relative;overflow:hidden;transition:.3s;backdrop-filter:blur(6px)}
+  .card:hover{border-color:var(--line-strong);transform:translateY(-3px)}
+  .card .glyph{position:absolute;top:-20px;right:-10px;font-family:"Noto Serif TC";font-weight:900;
+    font-size:6rem;color:rgba(255,255,255,.035);user-select:none}
+  .card h3{font-family:"Noto Serif TC";font-weight:700;font-size:1.22rem;margin-bottom:10px;position:relative}
+  .card p{color:var(--muted);font-size:.95rem;font-weight:300;position:relative}
+  .card p+p{margin-top:10px}
+  .card .hl{color:var(--text);font-weight:500}
+  .card .red{color:var(--blood)}
+  .card .amber{color:var(--sun)}
+
+  /* ---------- COMPARISON TABLE ---------- */
+  .cmp{width:100%;border-collapse:collapse;background:var(--panel);border-radius:16px;overflow:hidden;border:1px solid var(--line)}
+  .cmp th,.cmp td{padding:15px 18px;text-align:left;border-bottom:1px solid var(--line);font-size:.95rem;vertical-align:top}
+  .cmp thead th{font-family:"Noto Serif TC";font-weight:700;font-size:1.05rem;background:rgba(255,255,255,.03)}
+  .cmp thead th:nth-child(2){color:var(--blood)}
+  .cmp thead th:nth-child(3){color:var(--sun)}
+  .cmp td:first-child,.cmp th:first-child{color:var(--faint);font-weight:500;width:24%}
+  .cmp td{color:var(--muted);font-weight:300}
+  .cmp tr:last-child td{border-bottom:0}
+
+  /* safety */
+  .safety{margin-top:26px;display:flex;gap:18px;align-items:flex-start;
+    background:linear-gradient(120deg,rgba(217,68,50,.10),rgba(255,122,24,.05));
+    border:1px solid rgba(255,122,24,.28);border-radius:16px;padding:22px 24px}
+  .safety .ic{font-size:1.8rem;flex:none;filter:drop-shadow(0 0 10px rgba(255,122,24,.4))}
+  .safety h4{font-family:"Noto Serif TC";font-weight:700;color:var(--sun);margin-bottom:5px}
+  .safety p{color:var(--muted);font-size:.93rem;font-weight:300}
+
+  footer{text-align:center;padding:60px 0 50px;color:var(--faint);font-size:.85rem;font-weight:300}
+  footer .disc{font-family:"Fraunces",serif;font-style:italic;color:var(--muted);margin-bottom:6px}
+
+  .reveal{opacity:0;transform:translateY(22px);transition:.8s cubic-bezier(.16,.7,.3,1)}
+  .reveal.in{opacity:1;transform:none}
+</style>
+</head>
+<body>
+
+<header class="hero">
+  <div class="wrap">
+    <div class="kicker">Eclipse · 高中地球科學互動教室</div>
+    <h1 class="title">日<span class="eclipse-o"></span>月之間</h1>
+    <p class="lede">當<b>太陽、地球、月球</b>連成一線，影子便登場。<br/>拖動下方控制軸，親手讓一場<b>月全蝕</b>或<b>日全食</b>在眼前發生。</p>
+    <div class="mode-toggle" id="modeToggle">
+      <button data-mode="lunar" class="active"><span class="dot"></span>月全蝕</button>
+      <button data-mode="solar"><span class="dot"></span>日全食</button>
+    </div>
+  </div>
+</header>
+
+<section class="wrap">
+  <div class="stage-card reveal">
+    <div class="stage-grid">
+      <div class="canvas-box">
+        <span class="cbox-label" id="topLabel">俯視 · 太陽–地球–月球</span>
+        <canvas id="stage" width="1240" height="720"></canvas>
+      </div>
+      <div class="canvas-box">
+        <span class="cbox-label">從地球上看</span>
+        <canvas id="sky" width="760" height="720"></canvas>
+        <div class="phase-badge">
+          <span class="pname" id="phaseName">食甚</span>
+          <span class="pen" id="phaseEn">MAXIMUM</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="controls">
+      <div class="scrub-row">
+        <button class="playbtn" id="playBtn" aria-label="播放">▶</button>
+        <input type="range" id="scrub" min="0" max="1000" value="500" />
+      </div>
+      <div class="ctl-meta">
+        <span id="hintText">月球正通過地球的影子</span>
+        <div class="speed-pills" id="speedPills">
+          <button data-s="0.5">0.5×</button>
+          <button data-s="1" class="on">1×</button>
+          <button data-s="2">2×</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="explain-strip reveal" id="explainStrip"></div>
+</section>
+
+<!-- WHY NOT MONTHLY -->
+<section class="wrap">
+  <div class="sec-head reveal">
+    <span class="idx">02</span>
+    <h2>那為什麼不是每個月都發生？</h2>
+    <span class="rule"></span>
+  </div>
+  <div class="why-grid reveal">
+    <div class="why-canvas-box">
+      <span class="cbox-label">側視 · 沿著黃道面看過去</span>
+      <div class="why-verdict verdict-no" id="whyVerdict">本月無食</div>
+      <canvas id="why" width="1100" height="680"></canvas>
+    </div>
+    <div class="why-panel">
+      <div class="why-phase-toggle" id="whyPhase">
+        <button data-p="new" class="on">新月（試日食）</button>
+        <button data-p="full">滿月（試月食）</button>
+      </div>
+      <div class="slider-block">
+        <label>月球軌道傾角 <b><span id="tiltVal">5.1</span>°</b></label>
+        <input type="range" id="tilt" min="0" max="70" value="51" />
+      </div>
+      <div class="slider-block">
+        <label>是否對準「交點」 <b><span id="alignVal">0</span>%</b></label>
+        <input type="range" id="align" min="0" max="100" value="0" />
+      </div>
+      <p class="why-note">
+        月球軌道相對黃道面傾斜約 <b>5°</b>。大多數的新月／滿月，月球都<b>偏上或偏下</b>，
+        影子因此擦肩而過 —— 這就是為什麼不是每個月都有食。<br/><br/>
+        只有當「新月／滿月」恰好發生在軌道與黃道的交會點（<b>交點 / node</b>）時，三者才真正連成一線。
+        把上面兩個滑桿都調到「對齊」，看看影子如何精準命中。
+      </p>
+    </div>
+  </div>
+</section>
+
+<!-- KNOWLEDGE CARDS -->
+<section class="wrap">
+  <div class="sec-head reveal">
+    <span class="idx">03</span>
+    <h2>核心觀念拆解</h2>
+    <span class="rule"></span>
+  </div>
+  <div class="cards">
+    <div class="card reveal">
+      <span class="glyph">影</span>
+      <h3>本影與半影</h3>
+      <p>太陽不是一個點，而是有大小的光源，所以影子分兩層。</p>
+      <p><span class="hl">本影（Umbra）</span>：太陽光被完全擋住的核心區，最暗 → 對應<span class="amber">全食</span>。</p>
+      <p><span class="hl">半影（Penumbra）</span>：只擋住一部分太陽的外圈，半亮 → 對應<span class="amber">偏食</span>。</p>
+    </div>
+    <div class="card reveal">
+      <span class="glyph">紅</span>
+      <h3>月全蝕為何變「血月」？</h3>
+      <p>月球進入地球本影時並非全黑。地球<span class="hl">大氣層像透鏡</span>，把太陽光<span class="hl">折射</span>進影子裡。</p>
+      <p>藍光被大氣<span class="hl">散射</span>掉（和夕陽變紅同個原理），剩下<span class="red">紅光</span>折射到月面，於是月亮染成暗紅色。</p>
+    </div>
+    <div class="card reveal">
+      <span class="glyph">環</span>
+      <h3>日全食 vs 日環食</h3>
+      <p>月球軌道是橢圓，與地球的距離會變。</p>
+      <p>月球較<span class="hl">近</span>、視直徑夠大蓋住整個太陽 → <span class="amber">日全食</span>，可見日冕。</p>
+      <p>月球較<span class="hl">遠</span>、本影尖端打不到地面 → <span class="amber">日環食</span>，邊緣露出一圈「金環」。</p>
+    </div>
+    <div class="card reveal">
+      <span class="glyph">帶</span>
+      <h3>為何月食人人可見，日食卻很「挑地點」？</h3>
+      <p><span class="hl">月全蝕</span>：地球影子很大，整顆月亮都浸在裡面 → <span class="red">面向月亮的半個地球</span>同時看得到。</p>
+      <p><span class="hl">日全食</span>：月球本影投到地面只是一條<span class="amber">窄窄的全食帶</span>（寬約百餘公里）→ 站對地方才看得到。</p>
+    </div>
+  </div>
+</section>
+
+<!-- COMPARISON -->
+<section class="wrap">
+  <div class="sec-head reveal">
+    <span class="idx">04</span>
+    <h2>一張表看懂兩者差異</h2>
+    <span class="rule"></span>
+  </div>
+  <div class="reveal" style="overflow-x:auto">
+  <table class="cmp">
+    <thead><tr><th>比較項目</th><th>月食 Lunar Eclipse</th><th>日食 Solar Eclipse</th></tr></thead>
+    <tbody>
+      <tr><td>排列順序</td><td>太陽－<b style="color:var(--earth)">地球</b>－月球</td><td>太陽－<b style="color:var(--silver)">月球</b>－地球</td></tr>
+      <tr><td>發生月相</td><td>滿月（望）</td><td>新月（朔）</td></tr>
+      <tr><td>誰擋住誰</td><td>地球影子蓋住月球</td><td>月球影子蓋住地球的一小塊</td></tr>
+      <tr><td>看得到的範圍</td><td>夜半球都看得到、時間長</td><td>僅本影掃過的窄帶、時間短（數分鐘）</td></tr>
+      <tr><td>特殊現象</td><td>血月（暗紅色）</td><td>日冕、鑽石環、貝里珠</td></tr>
+      <tr><td>能不能直接看</td><td>✅ 肉眼安全</td><td>⚠️ 絕對需要專用減光設備</td></tr>
+    </tbody>
+  </table>
+  </div>
+
+  <div class="safety reveal">
+    <span class="ic">⚠️</span>
+    <div>
+      <h4>觀測安全提醒</h4>
+      <p>月食對眼睛無害，肉眼或望遠鏡盡情看。但<b style="color:var(--sun)">日食千萬不可用肉眼或一般墨鏡直視太陽</b>，
+      會造成永久性視網膜灼傷。請使用合格的太陽濾鏡（巴德膜）、日食眼鏡，或用投影法間接觀察。</p>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <p class="disc">本互動為教學示意圖，天體大小與距離並未按真實比例繪製。</p>
+    <p>食 · 日月之間 — 高中地球科學互動解說系統</p>
+  </div>
+</footer>
+
+<script>
+(()=>{
+"use strict";
+
+// ============ shared state ============
+const state = { mode:'lunar', t:0.5, playing:false, speed:1, dir:1 };
+
+// ============ starfield (deterministic-ish, generated once) ============
+function makeStars(n,w,h){
+  const s=[];
+  for(let i=0;i<n;i++){
+    s.push({x:Math.random()*w,y:Math.random()*h,r:Math.random()*1.3+.2,a:Math.random()*.6+.2,tw:Math.random()*6.28});
+  }
+  return s;
+}
+
+// ============ canvas helpers ============
+function fitDPR(canvas){
+  const dpr=Math.min(window.devicePixelRatio||1,2);
+  const ctx=canvas.getContext('2d');
+  // canvas has fixed logical size via width/height attrs; we draw in that coordinate space.
+  return ctx;
+}
+
+const stage=document.getElementById('stage');
+const sky=document.getElementById('sky');
+const sx=stage.getContext('2d');
+const kx=sky.getContext('2d');
+const SW=stage.width, SH=stage.height;
+const KW=sky.width, KH=sky.height;
+const stageStars=makeStars(140,SW,SH);
+const skyStars=makeStars(90,KW,KH);
+
+function vec(x,y){return {x,y};}
+function sub(a,b){return {x:a.x-b.x,y:a.y-b.y};}
+function add(a,b){return {x:a.x+b.x,y:a.y+b.y};}
+function mul(a,s){return {x:a.x*s,y:a.y*s};}
+function len(a){return Math.hypot(a.x,a.y);}
+function norm(a){const l=len(a)||1;return {x:a.x/l,y:a.y/l};}
+function perp(a){return {x:-a.y,y:a.x};}
+
+let tms=0; // running time for twinkle
+
+function drawStars(ctx,stars,W,H){
+  ctx.fillStyle='#04040a';ctx.fillRect(0,0,W,H);
+  // faint nebula
+  const g=ctx.createRadialGradient(W*.8,H*.1,0,W*.8,H*.1,W*.6);
+  g.addColorStop(0,'rgba(255,140,40,.05)');g.addColorStop(1,'transparent');
+  ctx.fillStyle=g;ctx.fillRect(0,0,W,H);
+  for(const s of stars){
+    const tw=.6+.4*Math.sin(tms*.002+s.tw);
+    ctx.globalAlpha=s.a*tw;ctx.fillStyle='#dfe6ff';
+    ctx.beginPath();ctx.arc(s.x,s.y,s.r,0,6.2832);ctx.fill();
+  }
+  ctx.globalAlpha=1;
+}
+
+// glow disk
+function sun(ctx,c,R){
+  const halo=ctx.createRadialGradient(c.x,c.y,R*.4,c.x,c.y,R*3.2);
+  halo.addColorStop(0,'rgba(255,180,80,.5)');
+  halo.addColorStop(.3,'rgba(255,140,40,.18)');
+  halo.addColorStop(1,'transparent');
+  ctx.fillStyle=halo;ctx.beginPath();ctx.arc(c.x,c.y,R*3.2,0,6.2832);ctx.fill();
+  const g=ctx.createRadialGradient(c.x-R*.3,c.y-R*.3,R*.1,c.x,c.y,R);
+  g.addColorStop(0,'#fff7e6');g.addColorStop(.5,'#ffc24d');g.addColorStop(1,'#ff7a18');
+  ctx.fillStyle=g;ctx.beginPath();ctx.arc(c.x,c.y,R,0,6.2832);ctx.fill();
+}
+function earth(ctx,c,R){
+  const g=ctx.createRadialGradient(c.x-R*.35,c.y-R*.35,R*.1,c.x,c.y,R);
+  g.addColorStop(0,'#7fb6f0');g.addColorStop(.55,'#3f86c9');g.addColorStop(1,'#143a66');
+  ctx.fillStyle=g;ctx.beginPath();ctx.arc(c.x,c.y,R,0,6.2832);ctx.fill();
+  // land hint
+  ctx.fillStyle='rgba(80,170,110,.55)';
+  ctx.beginPath();ctx.ellipse(c.x-R*.2,c.y+R*.1,R*.4,R*.28,.5,0,6.2832);ctx.fill();
+  ctx.beginPath();ctx.ellipse(c.x+R*.35,c.y-R*.3,R*.22,R*.3,-.3,0,6.2832);ctx.fill();
+  // night side
+  ctx.save();ctx.beginPath();ctx.arc(c.x,c.y,R,0,6.2832);ctx.clip();
+  const sh=ctx.createLinearGradient(c.x-R,0,c.x+R,0);
+  sh.addColorStop(0,'rgba(0,0,10,0)');sh.addColorStop(1,'rgba(0,0,10,.55)');
+  ctx.fillStyle=sh;ctx.fillRect(c.x-R,c.y-R,2*R,2*R);ctx.restore();
+}
+function moonDisk(ctx,c,R,redTint){
+  const g=ctx.createRadialGradient(c.x-R*.3,c.y-R*.3,R*.1,c.x,c.y,R);
+  if(redTint>0){
+    g.addColorStop(0,`rgba(220,90,60,${.7+.3*redTint})`);
+    g.addColorStop(.6,`rgba(${180-redTint*40},${60-redTint*20},40,1)`);
+    g.addColorStop(1,'#5a120c');
+  }else{
+    g.addColorStop(0,'#fdfdfb');g.addColorStop(.6,'#c8cdd8');g.addColorStop(1,'#8b91a0');
+  }
+  ctx.fillStyle=g;ctx.beginPath();ctx.arc(c.x,c.y,R,0,6.2832);ctx.fill();
+  // craters
+  ctx.fillStyle=redTint>0?'rgba(90,20,12,.4)':'rgba(120,126,140,.5)';
+  for(const cr of [[-.3,-.2,.18],[.25,.3,.12],[.1,-.35,.1],[-.15,.35,.09]]){
+    ctx.beginPath();ctx.arc(c.x+cr[0]*R,c.y+cr[1]*R,cr[2]*R,0,6.2832);ctx.fill();
+  }
+}
+
+function label(ctx,c,text,col,dy){
+  ctx.font='600 22px "Noto Sans TC"';ctx.textAlign='center';
+  ctx.fillStyle=col;ctx.fillText(text,c.x,c.y+(dy||0));
+}
+
+// draw shadow double-cone given source S(Rs) and occluder M(Ro)
+function drawShadow(ctx,S,Rs,M,Ro,reach){
+  const d=norm(sub(M,S)); const n=perp(d);
+  const dist=len(sub(M,S));
+  const Lu=Ro*dist/Math.max(Rs-Ro,1);     // umbra tip distance ahead of M
+  const Lp=Ro*dist/(Rs+Ro);               // penumbra virtual apex behind M
+  const Au=add(M,mul(d,Lu));
+  const Ap=sub(M,mul(d,Lp));
+  const eTop=add(M,mul(n,Ro)), eBot=sub(M,mul(n,Ro));
+  // penumbra (light)
+  const K=reach;
+  const pT=add(Ap,mul(sub(eTop,Ap),K)), pB=add(Ap,mul(sub(eBot,Ap),K));
+  ctx.fillStyle='rgba(140,150,200,.12)';
+  ctx.beginPath();ctx.moveTo(eTop.x,eTop.y);ctx.lineTo(pT.x,pT.y);ctx.lineTo(pB.x,pB.y);ctx.lineTo(eBot.x,eBot.y);ctx.closePath();ctx.fill();
+  // umbra (dark) — triangle to tip, plus a faint extension (antumbra) beyond tip
+  ctx.fillStyle='rgba(3,3,9,.9)';
+  ctx.beginPath();ctx.moveTo(eTop.x,eTop.y);ctx.lineTo(Au.x,Au.y);ctx.lineTo(eBot.x,eBot.y);ctx.closePath();ctx.fill();
+  return {d,n,Au,umbraTipDist:Lu};
+}
+
+// ====== eclipse phase from t ======
+// Derived from real disk geometry. q = covering-body radius / covered-body radius.
+//  · solar: Moon barely bigger than the Sun's disk (q≈1.05) → totality window is TINY.
+//  · lunar: Earth's umbra ≈2.6× the Moon (q≈2.6) → totality window is WIDE / long-lasting.
+// This asymmetry is itself a teaching point.
+const Q={lunar:2.6, solar:1.05};
+function phaseInfo(t){
+  const q=Q[state.mode];
+  const off=Math.abs(t-0.5)*2;       // 0 center .. 1 edge
+  const sep=off*(1+q);               // centre separation, in units of covered-body radius
+  let stage;
+  if(sep>=(1+q)-0.001) stage='none';
+  else if(sep<=Math.abs(q-1)) stage='total';
+  else stage='partial';
+  let name,en;
+  if(stage==='none'){name='食前 / 食後';en='—';}
+  else if(stage==='total'){
+    if(off<0.04){name='食甚';en='MAXIMUM';}
+    else if(t<0.5){name='食既';en='TOTALITY BEGINS';}
+    else{name='生光';en='TOTALITY ENDS';}
+  }else{
+    if(t<0.5){name='初虧 · 偏食';en='PARTIAL · 1ST CONTACT';}
+    else{name='復圓 · 偏食';en='PARTIAL · LAST CONTACT';}
+  }
+  return {name,en,stage,total:stage==='total',off,sep,q,sign:(t<0.5?-1:1)};
+}
+
+// ============ STAGE rendering ============
+function renderStage(){
+  drawStars(sx,stageStars,SW,SH);
+  const t=state.t, axisY=SH*0.5;
+  if(state.mode==='lunar'){
+    // Sun(left) - Earth(mid) - Moon(right). Earth occludes -> shadow to right, moon inside.
+    const Sun=vec(110,axisY), RsunDraw=70, Rsun=70;
+    const E=vec(430,axisY), Re=60;
+    const moonX=820;
+    // moon vertical travel: t 0->1 maps top->bottom through umbra
+    const span=520;
+    const moonY=axisY+(t-0.5)*span;
+    const Rm=26;
+    // light rays sun->earth (subtle)
+    sx.strokeStyle='rgba(255,180,90,.10)';sx.lineWidth=2;
+    for(let i=-2;i<=2;i++){sx.beginPath();sx.moveTo(Sun.x,Sun.y+i*30);sx.lineTo(SW,Sun.y+i*30*4);sx.stroke();}
+    // shadow from earth
+    const sh=drawShadow(sx,Sun,Rsun,E,Re,7);
+    // tint matches the phase model so both panels agree
+    const info=phaseInfo(t);
+    const red=info.total?1:(info.stage==='partial'?0.5:0);
+    sun(sx,Sun,RsunDraw);
+    earth(sx,E,Re);
+    moonDisk(sx,vec(moonX,moonY),Rm,red);
+    // labels
+    label(sx,vec(Sun.x,Sun.y),'太陽','rgba(255,200,120,.9)',RsunDraw+34);
+    label(sx,vec(E.x,E.y),'地球','rgba(150,190,240,.9)',Re+34);
+    label(sx,vec(moonX,moonY),'月球',red>0.5?'rgba(230,120,90,.9)':'rgba(220,225,240,.9)',-Rm-18);
+    // umbra/penumbra mini-labels
+    sx.font='italic 18px "Fraunces"';sx.textAlign='center';
+    sx.fillStyle='rgba(200,205,230,.4)';sx.fillText('地球本影',E.x+sh.umbraTipDist*.5,axisY-6);
+  } else {
+    // SOLAR: Sun(left) - Moon(mid occluder) - Earth(right). Moon shadow hits earth.
+    const Sun=vec(110,axisY), RsunDraw=72, Rsun=66;
+    const M0x=560;
+    const E=vec(1010,axisY), Re=92;
+    const Rm=20;
+    const span=460;
+    const moonY=axisY+(t-0.5)*span;
+    const M=vec(M0x,moonY);
+    sx.strokeStyle='rgba(255,180,90,.10)';sx.lineWidth=2;
+    for(let i=-2;i<=2;i++){sx.beginPath();sx.moveTo(Sun.x,Sun.y+i*30);sx.lineTo(SW,Sun.y+i*30*4);sx.stroke();}
+    const sh=drawShadow(sx,Sun,Rsun,M,Rm,26);
+    sun(sx,Sun,RsunDraw);
+    earth(sx,E,Re);
+    moonDisk(sx,M,Rm,0);
+    label(sx,vec(Sun.x,Sun.y),'太陽','rgba(255,200,120,.9)',RsunDraw+34);
+    label(sx,vec(E.x,E.y),'地球','rgba(150,190,240,.9)',Re+36);
+    label(sx,M,'月球','rgba(220,225,240,.9)',-Rm-16);
+    // mark totality band on earth where umbra hits
+    const d=sh.d;
+    // point where shadow axis meets earth's vertical
+    const axisAtEarth = M.y + (E.x-M.x)*(d.y/d.x);
+    sx.font='italic 17px "Fraunces"';sx.textAlign='left';
+    sx.fillStyle='rgba(255,180,90,.55)';
+    if(phaseInfo(t).total && Math.abs(axisAtEarth-E.y)<Re){
+      sx.fillText('全食帶',E.x+Re+10,axisAtEarth);
+      sx.strokeStyle='rgba(255,160,60,.7)';sx.lineWidth=3;
+      sx.beginPath();sx.arc(E.x,E.y,Re+2,Math.atan2(axisAtEarth-12-E.y,Re*.2),Math.atan2(axisAtEarth+12-E.y,Re*.2));
+    }
+  }
+}
+
+// ============ SKY (from earth) rendering ============
+function renderSky(){
+  drawStars(kx,skyStars,KW,KH);
+  const t=state.t, info=phaseInfo(t);
+  const cx=KW/2, cy=KH/2, R=150;
+  const sy=cy + info.sign*info.sep*R*1.02;   // covering body centre, same geometry as phaseInfo
+  if(state.mode==='lunar'){
+    // we look at the MOON; Earth's umbra (dark, red-fringed) sweeps across it.
+    moonDisk(kx,vec(cx,cy),R, info.total?1 : (info.stage==='partial'?0.55:0));
+    if(info.stage!=='none' && !info.total){
+      const shadowR=R*info.q;          // Earth umbra ≈ 2.6× Moon
+      kx.save();
+      kx.beginPath();kx.arc(cx,cy,R,0,6.2832);kx.clip();
+      const g=kx.createRadialGradient(cx,sy,shadowR*.2,cx,sy,shadowR);
+      g.addColorStop(0,'rgba(60,12,8,.96)');
+      g.addColorStop(.7,'rgba(120,30,18,.92)');
+      g.addColorStop(1,'rgba(150,50,30,.3)');
+      kx.fillStyle=g;kx.beginPath();kx.arc(cx,sy,shadowR,0,6.2832);kx.fill();
+      kx.restore();
+    }
+    kx.font='italic 20px "Fraunces"';kx.textAlign='center';kx.fillStyle='rgba(200,205,230,.45)';
+    kx.fillText(info.total?'月面染成暗紅 — 血月':info.stage==='none'?'滿月 — 尚未進入地球本影':'地球影子正吞沒月球',cx,cy+R+58);
+  } else {
+    // we look at the SUN; the Moon (dark) slides across covering it.
+    sun(kx,vec(cx,cy),R);
+    if(info.total){
+      const cg=kx.createRadialGradient(cx,cy,R*.95,cx,cy,R*2.4);
+      cg.addColorStop(0,'rgba(255,255,255,.7)');
+      cg.addColorStop(.2,'rgba(255,240,210,.35)');
+      cg.addColorStop(1,'transparent');
+      kx.fillStyle=cg;kx.beginPath();kx.arc(cx,cy,R*2.4,0,6.2832);kx.fill();
+    }
+    const Rm=R*info.q;                 // Moon disk slightly larger than Sun
+    kx.fillStyle='#0a0a12';
+    kx.beginPath();kx.arc(cx,sy,Rm,0,6.2832);kx.fill();
+    kx.strokeStyle='rgba(120,130,160,.35)';kx.lineWidth=2;
+    kx.beginPath();kx.arc(cx,sy,Rm,0,6.2832);kx.stroke();
+    kx.font='italic 20px "Fraunces"';kx.textAlign='center';kx.fillStyle='rgba(255,200,120,.5)';
+    kx.fillText(info.total?'太陽全被遮住 — 可見日冕':info.stage==='none'?'新月 — 尚未咬到太陽':'月亮正咬掉太陽',cx,cy+R+58);
+  }
+  document.getElementById('phaseName').textContent=info.name;
+  document.getElementById('phaseEn').textContent=info.en;
+}
+
+// ============ WHY-NOT-MONTHLY panel ============
+const why=document.getElementById('why'); const wx=why.getContext('2d');
+const WW=why.width, WH=why.height; const whyStars=makeStars(70,WW,WH);
+const whyState={tilt:5.1, align:0, phase:'new'};
+
+function renderWhy(){
+  drawStars(wx,whyStars,WW,WH);
+  const cy=WH*0.5, ex=WW*0.62, Re=46;
+  const Sun=vec(120,cy), Rs=58;
+  // ecliptic plane line
+  wx.strokeStyle='rgba(255,255,255,.18)';wx.setLineDash([8,8]);wx.lineWidth=1.5;
+  wx.beginPath();wx.moveTo(40,cy);wx.lineTo(WW-30,cy);wx.stroke();wx.setLineDash([]);
+  wx.font='italic 16px "Fraunces"';wx.textAlign='left';wx.fillStyle='rgba(255,255,255,.38)';
+  wx.fillText('黃道面（地球公轉軌道面）',46,WH-26);
+  // sun + earth
+  sun(wx,Sun,Rs);
+  earth(wx,vec(ex,cy),Re);
+  label(wx,Sun,'太陽','rgba(255,200,120,.9)',Rs+30);
+  label(wx,vec(ex,cy),'地球','rgba(150,190,240,.9)',Re+30);
+
+  // moon vertical offset at new/full caused by tilt, reduced by alignment
+  const tiltDeg=whyState.tilt;
+  const alignF=whyState.align/100;
+  const visualGain=7.2;                       // exaggerate small angle for visibility
+  const maxH=Math.sin(tiltDeg*Math.PI/180)*visualGain*Re*2.4;
+  const h=maxH*(1-alignF);                     // 0 when fully aligned at node
+  const Rm=14;
+
+  let moon, lineFrom, lineTo, isEclipse, threshold;
+  if(whyState.phase==='new'){
+    // new moon: between sun and earth
+    moon=vec(ex-150, cy - h);
+    // ray sun->earth tangent: eclipse if moon within sun/earth corridor
+    threshold=Re*0.9;
+    // sun light cone toward earth
+    wx.fillStyle='rgba(255,190,90,.06)';
+    wx.beginPath();wx.moveTo(Sun.x,Sun.y-Rs);wx.lineTo(ex,cy-Re);wx.lineTo(ex,cy+Re);wx.lineTo(Sun.x,Sun.y+Rs);wx.closePath();wx.fill();
+    isEclipse=Math.abs(h)<threshold;
+    if(isEclipse){
+      // moon shadow onto earth
+      const d=norm(sub(vec(ex,cy),moon));
+      const tip=add(moon,mul(d,260));
+      wx.fillStyle='rgba(3,3,9,.85)';
+      wx.beginPath();wx.moveTo(moon.x,moon.y-Rm);wx.lineTo(tip.x,tip.y);wx.lineTo(moon.x,moon.y+Rm);wx.closePath();wx.fill();
+    }
+    moonDisk(wx,moon,Rm,0);
+    label(wx,moon,'新月','rgba(220,225,240,.85)',-Rm-12);
+  } else {
+    // full moon: opposite side of earth from sun
+    moon=vec(ex+160, cy - h);
+    threshold=Re*1.0;
+    // earth shadow toward right
+    wx.fillStyle='rgba(3,3,9,.7)';
+    wx.beginPath();wx.moveTo(ex,cy-Re);wx.lineTo(WW-20,cy-Re*1.4);wx.lineTo(WW-20,cy+Re*1.4);wx.lineTo(ex,cy+Re);wx.closePath();wx.fill();
+    isEclipse=Math.abs(h)<threshold;
+    moonDisk(wx,moon,Rm,isEclipse?1:0);
+    label(wx,moon,'滿月','rgba(220,225,240,.85)',-Rm-12);
+  }
+
+  // offset indicator
+  if(Math.abs(h)>4){
+    wx.strokeStyle='rgba(232,176,75,.5)';wx.setLineDash([4,4]);wx.lineWidth=1.5;
+    wx.beginPath();wx.moveTo(moon.x,cy);wx.lineTo(moon.x,moon.y);wx.stroke();wx.setLineDash([]);
+    wx.fillStyle='rgba(232,176,75,.7)';wx.font='italic 15px "Fraunces"';wx.textAlign='center';
+    wx.fillText('偏離',moon.x+30,(cy+moon.y)/2);
+  }
+
+  // verdict
+  const v=document.getElementById('whyVerdict');
+  if(isEclipse){v.textContent= whyState.phase==='new'?'✅ 三者連線 → 日食！':'✅ 三者連線 → 月食！';v.className='why-verdict verdict-yes';}
+  else{v.textContent='本月無食（影子擦肩而過）';v.className='why-verdict verdict-no';}
+}
+
+// ============ explainer strip content (per mode) ============
+function renderStrip(){
+  const el=document.getElementById('explainStrip');
+  const data = state.mode==='lunar' ? [
+    ['01','排列順序','太陽 → 地球 → 月球。地球夾在中間，把影子投到月球上。'],
+    ['02','發生時機','只發生在<b>滿月</b>。此時月球跑到地球背對太陽的那一側。'],
+    ['03','看到什麼','月球滑入地球本影，逐漸變暗、最後染成暗紅色的<b>血月</b>。']
+  ] : [
+    ['01','排列順序','太陽 → 月球 → 地球。月球夾在中間，把影子投到地球上。'],
+    ['02','發生時機','只發生在<b>新月</b>。此時月球跑到地球與太陽之間。'],
+    ['03','看到什麼','月球的本影掃過地表的窄帶，當地白晝瞬間轉暗、露出<b>日冕</b>。']
+  ];
+  el.innerHTML=data.map(d=>`<div class="cell"><h4><span class="n">${d[0]}</span>${d[1]}</h4><p>${d[2]}</p></div>`).join('');
+  document.getElementById('topLabel').textContent = state.mode==='lunar'
+    ? '俯視 · 太陽–地球–月球' : '俯視 · 太陽–月球–地球';
+  document.getElementById('hintText').textContent = state.mode==='lunar'
+    ? '月球正通過地球的影子' : '月球的影子正掃過地球';
+}
+
+// ============ animation loop ============
+function frame(ts){
+  tms=ts;
+  if(state.playing){
+    state.t += 0.0016*state.speed*state.dir;
+    if(state.t>=1){state.t=1;state.dir=-1;}
+    if(state.t<=0){state.t=0;state.dir=1;}
+    const sc=document.getElementById('scrub');
+    sc.value=state.t*1000; sc.style.setProperty('--fill',(state.t*100)+'%');
+  }
+  renderStage();renderSky();
+  requestAnimationFrame(frame);
+}
+
+// ============ wire up controls ============
+const scrub=document.getElementById('scrub');
+const playBtn=document.getElementById('playBtn');
+scrub.style.setProperty('--fill','50%');
+scrub.addEventListener('input',e=>{
+  state.t=e.target.value/1000;
+  scrub.style.setProperty('--fill',(state.t*100)+'%');
+  if(!state.playing){renderStage();renderSky();}
+});
+playBtn.addEventListener('click',()=>{
+  state.playing=!state.playing;
+  playBtn.textContent=state.playing?'❚❚':'▶';
+});
+document.getElementById('speedPills').addEventListener('click',e=>{
+  if(e.target.tagName!=='BUTTON')return;
+  state.speed=parseFloat(e.target.dataset.s);
+  [...e.currentTarget.children].forEach(b=>b.classList.toggle('on',b===e.target));
+});
+document.getElementById('modeToggle').addEventListener('click',e=>{
+  const b=e.target.closest('button'); if(!b)return;
+  state.mode=b.dataset.mode;
+  [...e.currentTarget.children].forEach(x=>x.classList.toggle('active',x===b));
+  renderStrip();renderStage();renderSky();
+});
+
+// why panel
+const tilt=document.getElementById('tilt'), align=document.getElementById('align');
+function syncWhy(){
+  whyState.tilt=tilt.value/10; whyState.align=parseInt(align.value);
+  document.getElementById('tiltVal').textContent=whyState.tilt.toFixed(1);
+  document.getElementById('alignVal').textContent=whyState.align;
+  tilt.style.setProperty('--fill',(tilt.value/70*100)+'%');
+  align.style.setProperty('--fill',align.value+'%');
+  renderWhy();
+}
+tilt.addEventListener('input',syncWhy);
+align.addEventListener('input',syncWhy);
+document.getElementById('whyPhase').addEventListener('click',e=>{
+  if(e.target.tagName!=='BUTTON')return;
+  whyState.phase=e.target.dataset.p;
+  [...e.currentTarget.children].forEach(b=>b.classList.toggle('on',b===e.target));
+  renderWhy();
+});
+
+// reveal on scroll
+const io=new IntersectionObserver(es=>es.forEach(en=>{if(en.isIntersecting)en.target.classList.add('in');}),{threshold:.12});
+document.querySelectorAll('.reveal').forEach(el=>io.observe(el));
+
+// init
+renderStrip();syncWhy();
+requestAnimationFrame(frame);
+})();
+</script>
+</body>
+</html>
